@@ -1,0 +1,2016 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f9f6ef">
+  <meta name="description" content="AU Toolkit manual for Adobe After Effects.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <title>AU Toolkit — Manual</title>
+  <style>
+    :root {
+      --bg: #f9f6ef;
+      --ink: #11151e;
+      --muted: #73767b;
+      --grid: rgba(17, 21, 30, .09);
+      --card: #fffdfa;
+      --orange: #ff744b;
+      --acid: #b8ff40;
+      --blue: #b8d7ff;
+      --violet: #c8b3ff;
+      --dark: #10131a;
+      --line: rgba(17, 21, 30, .13);
+      --ease: cubic-bezier(.2, 1, .3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font: 15px/1.5 Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body:before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: .35;
+      background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(to bottom, black, transparent 70%);
+    }
+
+    body:after {
+      content: "";
+      position: fixed;
+      inset: -35%;
+      z-index: 21;
+      pointer-events: none;
+      opacity: .16;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='.85'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      animation: grain-shift .24s steps(2) infinite;
+    }
+
+    ::selection {
+      color: var(--bg);
+      background: var(--ink);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 64px));
+      margin-inline: auto;
+    }
+
+    .mono,
+    .eyebrow,
+    .nav,
+    .counter,
+    .tag,
+    .button,
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: opacity .85s ease, transform .85s var(--ease);
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: none;
+    }
+
+    .progress {
+      position: fixed;
+      z-index: 45;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 3px;
+      background: var(--orange);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    header {
+      position: fixed;
+      z-index: 35;
+      top: 15px;
+      left: 50%;
+      width: min(1160px, calc(100% - 40px));
+      height: 66px;
+      transform: translateX(-50%);
+      background: rgba(255, 253, 250, .9);
+      border: 1px solid rgba(17, 21, 30, .08);
+      border-radius: 999px;
+      box-shadow: 0 12px 30px rgba(24, 27, 34, .1);
+      backdrop-filter: blur(15px);
+    }
+
+    .header-row {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 16px 0 20px;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      letter-spacing: -.06em;
+    }
+
+    .nav {
+      display: flex;
+      gap: 25px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .nav a {
+      transition: color .25s ease;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      color: var(--ink);
+    }
+
+    .header-cta {
+      justify-self: end;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--orange);
+      color: #fff;
+      font: 10px monospace;
+      transition: transform .35s var(--ease), background .25s ease;
+    }
+
+    .header-cta:hover {
+      background: var(--ink);
+      transform: translateY(-3px);
+    }
+
+    .menu {
+      display: none;
+      justify-self: end;
+      border: 0;
+      background: none;
+      color: var(--ink);
+      font-size: 20px;
+    }
+
+    .hero {
+      min-height: 820px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 150px 0 100px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .ticker {
+      overflow: hidden;
+      background: var(--cream);
+      white-space: nowrap;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      transform: translate3d(100vw, 0, 0);
+      will-change: transform;
+    }
+
+    .ticker-sequence {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      min-height: 54px;
+      padding-right: 48px;
+      font: 14px/1 monospace;
+    }
+
+    .ticker-sequence b {
+      font-weight: 700;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: var(--card);
+      box-shadow: 0 8px 22px rgba(24, 27, 34, .1);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hero-badge i {
+      width: 9px;
+      height: 9px;
+      display: block;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 0 5px rgba(255, 116, 75, .15);
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 42px auto 0;
+      font-size: clamp(66px, 10vw, 132px);
+      line-height: .87;
+      letter-spacing: -.07em;
+      font-weight: 600;
+      --title-x: 0px;
+      --title-y: 0px;
+      transform: translate3d(var(--title-x), var(--title-y), 0);
+      transition: transform .8s var(--ease);
+      will-change: transform;
+    }
+
+    h1 em {
+      display: inline-block;
+      padding: 8px 28px 14px;
+      border-radius: 999px;
+      background: var(--dark);
+      color: #fff;
+      font-style: normal;
+      box-shadow: 0 18px 30px rgba(16, 19, 26, .16);
+      --pill-x: 0px;
+      --pill-y: 0px;
+      transform: translate3d(var(--pill-x), var(--pill-y), 0) rotate(-2deg);
+      transition: transform .8s var(--ease), box-shadow .5s ease;
+      will-change: transform;
+    }
+
+    .hero-copy {
+      max-width: 490px;
+      margin: 35px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+      --copy-x: 0px;
+      --copy-y: 0px;
+      transform: translate3d(var(--copy-x), var(--copy-y), 0);
+      transition: transform .75s var(--ease);
+      will-change: transform;
+    }
+
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 28px;
+      font: 10px monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .hero-link span:last-child {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      transition: transform .4s var(--ease), background .25s ease;
+    }
+
+    .hero-link:hover span:last-child {
+      transform: rotate(45deg);
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .hero-tags {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .tag {
+      position: absolute;
+      padding: 10px 14px;
+      border-radius: 999px;
+      box-shadow: 0 10px 20px rgba(20, 25, 30, .12);
+      font-size: 10px;
+      letter-spacing: .04em;
+      white-space: nowrap;
+      --cursor-x: 0px;
+      --cursor-y: 0px;
+      animation: drift 5s ease-in-out infinite;
+      transition: transform .65s var(--ease), filter .35s ease;
+      will-change: transform, translate;
+    }
+
+    .tag:nth-child(1) {
+      left: 8%;
+      top: 37%;
+      background: var(--dark);
+      color: #fff;
+      transform: translate3d(var(--cursor-x), var(--cursor-y), 0) rotate(-10deg)
+    }
+
+    .tag:nth-child(2) {
+      right: 8%;
+      top: 34%;
+      background: var(--blue);
+      transform: translate3d(var(--cursor-x), var(--cursor-y), 0) rotate(8deg);
+      animation-delay: -2s
+    }
+
+    .tag:nth-child(3) {
+      left: 14%;
+      bottom: 19%;
+      background: var(--orange);
+      color: #fff;
+      transform: translate3d(var(--cursor-x), var(--cursor-y), 0) rotate(6deg);
+      animation-delay: -3s
+    }
+
+    .tag:nth-child(4) {
+      right: 12%;
+      bottom: 17%;
+      background: var(--violet);
+      transform: translate3d(var(--cursor-x), var(--cursor-y), 0) rotate(-8deg);
+      animation-delay: -1s
+    }
+
+    .tag:nth-child(5) {
+      left: 47%;
+      bottom: 9%;
+      background: var(--card);
+      transform: translate3d(var(--cursor-x), var(--cursor-y), 0) rotate(3deg);
+      animation-delay: -4s
+    }
+
+    section {
+      padding: 140px 0;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 34px;
+      margin-bottom: 65px;
+    }
+
+    .counter {
+      padding-top: 7px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: .1em;
+    }
+
+    h2 {
+      max-width: 780px;
+      margin: 0 0 20px;
+      font-size: clamp(48px, 7vw, 92px);
+      line-height: .9;
+      letter-spacing: -.075em;
+      font-weight: 600;
+    }
+
+    .section-head p {
+      max-width: 470px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .accent {
+      padding-left: 14px;
+      border-left: 2px solid var(--orange);
+      color: var(--ink) !important;
+    }
+
+    .products {
+      padding-top: 80px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 16px;
+    }
+
+    .product-card {
+      position: relative;
+      min-height: 420px;
+      padding: 29px;
+      overflow: hidden;
+      border: 1px solid rgba(17, 21, 30, .08);
+      border-radius: 27px;
+      background: var(--card);
+      box-shadow: 0 10px 28px rgba(20, 25, 30, .08);
+      transform-style: preserve-3d;
+      cursor: pointer;
+      will-change: transform;
+      transition: transform .5s var(--ease), box-shadow .5s ease;
+    }
+
+    .product-card:focus-visible {
+      outline: 3px solid var(--orange);
+      outline-offset: 5px;
+    }
+
+    .product-card:nth-child(3) {
+      grid-column: span 5
+    }
+
+    .product-card:nth-child(4) {
+      grid-column: span 7
+    }
+
+    .product-card:hover,
+    .product-card.is-hovered {
+      box-shadow: 0 24px 50px rgba(20, 25, 30, .15);
+      transform: translate3d(0, -8px, 0) scale(1.012);
+    }
+
+    .product-card:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: .5;
+      background-image: linear-gradient(rgba(17, 21, 30, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(17, 21, 30, .08) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    .product-card>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-label {
+      color: var(--muted);
+      font: 10px monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .card-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--card-color, var(--acid));
+    }
+
+    .product-card h3 {
+      max-width: 560px;
+      margin: 45px 0 9px;
+      font-size: clamp(27px, 3vw, 42px);
+      line-height: .95;
+      letter-spacing: -.06em;
+      font-weight: 600;
+    }
+
+    .product-card p {
+      max-width: 460px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card-note {
+      max-width: 500px;
+      margin-top: 16px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font: 10px/1.45 "SFMono-Regular", Consolas, monospace;
+    }
+
+    .product-card .card-visual {
+      position: absolute;
+      right: 28px;
+      bottom: 27px;
+      left: 28px;
+      height: 135px;
+      border-radius: 16px;
+      background: var(--card-color, var(--acid));
+      overflow: hidden;
+      transition: transform .55s var(--ease);
+    }
+
+    .product-card:hover .card-visual,
+    .product-card.is-hovered .card-visual {
+      transform: translateY(-8px) rotate(-1deg);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .card-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(17, 21, 30, .44);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      backdrop-filter: blur(0) saturate(1);
+      transition: opacity .4s ease, backdrop-filter .6s ease, visibility 0s linear .6s;
+    }
+
+    .card-modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      backdrop-filter: blur(14px) saturate(.72);
+      transition-delay: 0s;
+    }
+
+    .card-modal {
+      position: relative;
+      width: min(760px, 100%);
+      max-height: min(820px, calc(100vh - 48px));
+      overflow: auto;
+      padding: 32px;
+      border: 1px solid rgba(17, 21, 30, .1);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: 0 30px 100px rgba(17, 21, 30, .27);
+      opacity: 0;
+      transform: translateY(34px) scale(.86) rotate(-1deg);
+      transition: opacity .3s ease, transform .65s var(--ease);
+    }
+
+    .card-modal:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .48;
+      background-image: linear-gradient(rgba(17, 21, 30, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(17, 21, 30, .08) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, black, transparent 84%);
+      pointer-events: none;
+    }
+
+    .card-modal-overlay.open .card-modal {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotate(0);
+    }
+
+    .card-modal>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 2;
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: color .3s ease, background .3s ease, transform .4s var(--ease);
+    }
+
+    .modal-close:hover {
+      background: var(--ink);
+      color: var(--cream);
+      transform: rotate(45deg);
+    }
+
+    .modal-close:focus-visible {
+      outline: 2px solid var(--orange);
+      outline-offset: 3px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 48px;
+    }
+
+    .modal-label,
+    .modal-details-label {
+      color: var(--muted);
+      font: 10px monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .modal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--modal-color, var(--acid));
+    }
+
+    .card-modal h2 {
+      max-width: 650px;
+      margin: 55px 0 13px;
+      font-size: clamp(43px, 7vw, 76px);
+      line-height: .88;
+      letter-spacing: -.07em;
+    }
+
+    .modal-lead {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .modal-visual {
+      position: relative;
+      height: 180px;
+      margin: 30px 0 26px;
+      overflow: hidden;
+      border-radius: 16px;
+      background: var(--modal-color, var(--acid));
+    }
+
+    .modal-details {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .modal-details-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .modal-details-list li {
+      position: relative;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modal-details-list li:before {
+      content: "↗";
+      position: absolute;
+      left: 0;
+      color: var(--ink);
+    }
+
+    .modal-note {
+      margin: 24px 0 0 140px;
+      color: var(--muted);
+      font: 10px/1.5 "SFMono-Regular", Consolas, monospace;
+    }
+
+    .product-card:nth-child(1) {
+      --card-color: var(--acid)
+    }
+
+    .product-card:nth-child(2) {
+      --card-color: var(--blue)
+    }
+
+    .product-card:nth-child(3) {
+      --card-color: var(--violet)
+    }
+
+    .product-card:nth-child(4) {
+      --card-color: var(--orange)
+    }
+
+    .mini-panel {
+      position: absolute;
+      inset: 23px 25px;
+      display: grid;
+      align-content: center;
+      gap: 10px;
+    }
+
+    .mini-row {
+      height: 12px;
+      border-radius: 20px;
+      background: rgba(17, 21, 30, .18);
+    }
+
+    .mini-row:nth-child(2) {
+      width: 72%
+    }
+
+    .mini-row:nth-child(3) {
+      width: 88%
+    }
+
+    .mini-row:nth-child(4) {
+      width: 48%
+    }
+
+    .mini-panel:after {
+      content: "";
+      position: absolute;
+      right: 7%;
+      top: 15%;
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      opacity: .65;
+    }
+
+    .curve {
+      position: absolute;
+      left: 11%;
+      right: 11%;
+      top: 50%;
+      height: 2px;
+      background: var(--ink);
+      transform: rotate(-7deg);
+      box-shadow: 50px -23px 0 -1px var(--ink), 100px 18px 0 -1px var(--ink), 160px -10px 0 -1px var(--ink);
+    }
+
+    .curve:before,
+    .curve:after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      top: -5px;
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .curve:after {
+      right: 0;
+    }
+
+    .folder {
+      position: absolute;
+      left: 17%;
+      bottom: 21px;
+      width: 110px;
+      height: 75px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .25);
+      transform: rotate(-8deg);
+    }
+
+    .folder:before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: -13px;
+      width: 38px;
+      height: 14px;
+      border: 2px solid var(--ink);
+      border-bottom: 0;
+      border-radius: 7px 7px 0 0;
+    }
+
+    .folder:after {
+      content: "SRT";
+      position: absolute;
+      right: -62px;
+      top: 27px;
+      font: 700 15px monospace;
+    }
+
+    .code-box {
+      position: absolute;
+      inset: 22px 24px;
+      padding: 15px;
+      border-radius: 10px;
+      background: var(--dark);
+      color: var(--acid);
+      font: 10px/1.65 monospace;
+    }
+
+    .code-box span {
+      color: #fff;
+      opacity: .75;
+    }
+
+    .operations {
+      padding-top: 60px;
+      background: var(--dark);
+      color: #fff;
+    }
+
+    .operations .counter,
+    .operations .section-head p {
+      color: #9aa09a;
+    }
+
+    .operations .accent {
+      color: #fff !important;
+      border-color: var(--acid);
+    }
+
+    .ops-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 90px;
+      align-items: center;
+    }
+
+    .ops-layout h2 {
+      max-width: 560px;
+    }
+
+    .ops-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 10px;
+      max-width: 480px;
+      margin-inline: auto;
+      transition: opacity .7s ease, transform 1.15s var(--ease);
+    }
+
+    .ops-tags span {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      padding: 10px 13px;
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 100px;
+      color: #c2c8c1;
+      font: 11px monospace;
+      transition: transform .35s var(--ease), background .25s ease, color .25s ease;
+    }
+
+    .ops-tags span:hover {
+      transform: translateY(-5px) rotate(-2deg);
+      background: var(--acid);
+      color: var(--dark);
+      border-color: var(--acid);
+    }
+
+    .ops-object {
+      position: relative;
+      min-height: 310px;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      touch-action: manipulation;
+      isolation: isolate;
+    }
+
+    .ops-object:focus-visible {
+      outline: 2px solid var(--acid);
+      outline-offset: 12px;
+      border-radius: 50%;
+    }
+
+    .ops-ring {
+      position: absolute;
+      z-index: 0;
+      top: 50%;
+      left: 50%;
+      margin: -130px 0 0 -130px;
+      width: 260px;
+      height: 260px;
+      border: 1px solid rgba(184, 255, 64, .6);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(.58);
+      will-change: transform, opacity, box-shadow;
+      animation: radio-wave 4.6s cubic-bezier(.18, .72, .24, 1) infinite;
+      animation-fill-mode: both;
+    }
+
+    .ops-ring:nth-child(2) {
+      animation-delay: 1.53s;
+    }
+
+    .ops-ring:nth-child(3) {
+      animation-delay: 3.06s;
+    }
+
+    .ops-core {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      margin: -67.5px 0 0 -67.5px;
+      display: grid;
+      place-items: center;
+      width: 135px;
+      height: 135px;
+      border-radius: 35%;
+      background: var(--acid);
+      color: var(--dark);
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -.1em;
+      transform: rotate(-8deg);
+      box-shadow: 0 20px 45px rgba(184, 255, 64, .2);
+      pointer-events: none;
+      animation: au-float 4.8s ease-in-out infinite, ops-glow 3.8s ease-in-out infinite;
+    }
+
+    .ops-object:hover .ops-core {
+      filter: brightness(1.1);
+    }
+
+    .ops-copy,
+    .ops-stage {
+      transition: opacity .65s ease, transform 1.15s var(--ease);
+    }
+
+    .ops-stage {
+      position: relative;
+    }
+
+    .operations:not(.ops-activated) .ops-copy {
+      opacity: 0;
+      transform: translateY(22px) scale(.96);
+      pointer-events: none;
+    }
+
+    .operations:not(.ops-activated) .ops-copy .section-head > * {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .7s ease, transform .85s var(--ease);
+    }
+
+    .operations:not(.ops-activated) .ops-stage {
+      transform: translate3d(calc(-50% - 45px), 0, 0) scale(1.16);
+    }
+
+    .operations.ops-activated .ops-copy {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .operations.ops-activated .ops-copy .section-head > * {
+      opacity: 1;
+      transform: none;
+      transition: opacity .7s ease, transform .85s var(--ease);
+    }
+
+    .operations.ops-activated .ops-copy .section-head > *:nth-child(1) {
+      transition-delay: .1s;
+    }
+
+    .operations.ops-activated .ops-copy .section-head > *:nth-child(2) {
+      transition-delay: .2s;
+    }
+
+    .operations.ops-activated .ops-stage {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    .install {
+      background: var(--cream);
+    }
+
+    .install-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 100px;
+      align-items: start;
+    }
+
+    .install-steps {
+      border-top: 1px solid var(--line);
+      counter-reset: install;
+    }
+
+    .install-step {
+      counter-increment: install;
+      display: grid;
+      grid-template-columns: 45px 1fr;
+      gap: 18px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .install-step:before {
+      content: counter(install, decimal-leading-zero);
+      color: var(--orange);
+      padding-top: 3px;
+      font: 10px monospace;
+    }
+
+    .install-step h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+      letter-spacing: -.03em;
+    }
+
+    .install-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .path {
+      display: block;
+      position: relative;
+      margin-top: 9px;
+      padding: 12px 50px 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #4f7b15;
+      font: 10px/1.5 monospace;
+      word-break: break-word;
+    }
+
+    .copy {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      padding: 5px 7px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: none;
+      color: var(--muted);
+      font: 9px monospace;
+      text-transform: uppercase;
+    }
+
+    .copy:hover {
+      border-color: var(--black);
+      background: var(--black);
+      color: #fff;
+    }
+
+    .faq {
+      padding-bottom: 130px;
+    }
+
+    .faq-list {
+      max-width: 900px;
+      margin-left: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    .faq-list details {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .faq-list summary {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 55px 1fr 25px;
+      gap: 20px;
+      align-items: center;
+      padding: 23px 0;
+      cursor: pointer;
+    }
+
+    .faq-list summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-list summary span {
+      color: var(--muted);
+      font: 11px monospace;
+    }
+
+    .faq-list summary strong {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -.035em;
+    }
+
+    .faq-list summary:after {
+      content: "+";
+      color: var(--muted);
+      font: 22px monospace;
+      transition: transform .35s var(--ease);
+    }
+
+    .faq-list details[open] summary:after {
+      transform: rotate(45deg);
+    }
+
+    .faq-list details p {
+      max-width: 680px;
+      margin: 0;
+      padding: 0 0 25px 75px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer {
+      padding: 82px 0 30px;
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      margin-bottom: 80px;
+    }
+
+    footer h2 {
+      max-width: 700px;
+      margin: 0;
+      font-size: clamp(55px, 8.5vw, 120px);
+      line-height: .82;
+      letter-spacing: -.085em;
+    }
+
+    .footer-mark {
+      text-align: right;
+      font: 10px/1.8 monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      font: 10px monospace;
+    }
+
+    @keyframes drift {
+
+      0%,
+      100% {
+        translate: 0 0
+      }
+
+      50% {
+        translate: 0 -10px
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes radio-wave {
+
+      0% {
+        opacity: 0;
+        transform: scale(.58);
+      }
+
+      12% {
+        opacity: .9;
+        transform: scale(.72);
+      }
+
+      70% {
+        opacity: .28;
+        transform: scale(1.08);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.2);
+      }
+    }
+
+    @keyframes au-float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-8deg)
+      }
+
+      50% {
+        transform: translateY(-13px) rotate(-8deg)
+      }
+    }
+
+    @keyframes ops-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 20px 45px rgba(184, 255, 64, .2)
+      }
+
+      50% {
+        box-shadow: 0 26px 62px rgba(184, 255, 64, .42)
+      }
+    }
+
+    @keyframes grain-shift {
+      0% {
+        transform: translate(0, 0);
+      }
+
+      25% {
+        transform: translate(2%, -1%);
+      }
+
+      50% {
+        transform: translate(-1%, 2%);
+      }
+
+      75% {
+        transform: translate(1%, 1%);
+      }
+
+      100% {
+        transform: translate(-2%, -1%);
+      }
+    }
+
+    @media(max-width:900px) {
+      .wrap {
+        width: min(100% - 42px, 660px)
+      }
+
+      .header-row {
+        grid-template-columns: 1fr auto
+      }
+
+      .nav {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 17px;
+        padding: 20px 22px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: 0 12px 30px rgba(20, 25, 30, .1)
+      }
+
+      .nav.open {
+        display: flex
+      }
+
+      .header-cta {
+        display: none
+      }
+
+      .menu {
+        display: block
+      }
+
+      .hero {
+        padding-top: 130px
+      }
+
+      .side-word {
+        display: none
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr
+      }
+
+      .product-card:nth-child(3),
+      .product-card:nth-child(4) {
+        grid-column: auto
+      }
+
+      .ops-layout,
+      .install-grid {
+        grid-template-columns: 1fr;
+        gap: 55px
+      }
+
+      .ops-object {
+        min-height: 260px
+      }
+
+      .operations:not(.ops-activated) .ops-stage {
+        left: 0;
+        transform: scale(1.12);
+      }
+
+      .install-copy h2 {
+        max-width: 700px
+      }
+    }
+
+    @media(max-width:600px) {
+      .wrap {
+        width: calc(100% - 30px)
+      }
+
+      header {
+        top: 10px;
+        width: calc(100% - 20px);
+        height: 62px
+      }
+
+      .nav {
+        top: 66px
+      }
+
+      .hero {
+        min-height: 780px;
+        padding-top: 105px
+      }
+
+      .hero-top {}
+
+      .orbit {
+        width: 70px;
+        height: 70px
+      }
+
+      h1 {
+        font-size: clamp(60px, 17vw, 94px);
+        letter-spacing: -.055em
+      }
+
+      h1 em {
+        padding: 7px 19px 11px
+      }
+
+      .hero-copy {
+        font-size: 14px
+      }
+
+      .hero-tags .tag:nth-child(1),
+      .hero-tags .tag:nth-child(2) {
+        display: none
+      }
+
+      .hero-tags .tag:nth-child(3) {
+        left: 3%;
+        bottom: 18%
+      }
+
+      .hero-tags .tag:nth-child(4) {
+        right: 2%;
+        bottom: 23%
+      }
+
+      .hero-tags .tag:nth-child(5) {
+        left: 38%;
+        bottom: 10%
+      }
+
+      section {
+        padding: 90px 0
+      }
+
+      .section-head {
+        display: block;
+        margin-bottom: 50px
+      }
+
+      .counter {
+        margin-bottom: 23px
+      }
+
+      .section-head h2 {
+        font-size: clamp(49px, 14vw, 78px)
+      }
+
+      .product-card {
+        min-height: 410px;
+        padding: 23px
+      }
+
+      .product-card h3 {
+        font-size: 31px;
+        margin-top: 34px
+      }
+
+      .product-card .card-visual {
+        right: 23px;
+        left: 23px;
+        bottom: 22px
+      }
+
+      .card-modal-overlay {
+        padding: 12px;
+      }
+
+      .card-modal {
+        max-height: calc(100vh - 24px);
+        padding: 24px;
+        border-radius: 22px;
+      }
+
+      .card-modal h2 {
+        margin-top: 44px;
+        font-size: clamp(42px, 13vw, 65px);
+      }
+
+      .modal-visual {
+        height: 145px;
+        margin-top: 24px;
+      }
+
+      .modal-details {
+        display: block;
+      }
+
+      .modal-details-label {
+        display: block;
+        margin-bottom: 14px;
+      }
+
+      .modal-note {
+        margin-left: 0;
+      }
+
+      .tool-body {
+        display: block
+      }
+
+      .operations {
+        padding-top: 90px
+      }
+
+      .ops-layout h2 {
+        font-size: 51px
+      }
+
+      .ops-tags {
+        gap: 7px
+      }
+
+      .ops-tags span {
+        font-size: 10px;
+        padding: 8px 10px
+      }
+
+      .ops-ring {
+        margin: -110px 0 0 -110px;
+        width: 220px;
+        height: 220px
+      }
+
+      .ops-core {
+        margin: -60px 0 0 -60px;
+        width: 120px;
+        height: 120px
+      }
+
+      .install-step {
+        grid-template-columns: 40px 1fr;
+        gap: 12px
+      }
+
+      .faq-list summary {
+        grid-template-columns: 38px 1fr 18px;
+        gap: 12px
+      }
+
+      .faq-list summary strong {
+        font-size: 18px
+      }
+
+      .faq-list details p {
+        padding-left: 50px
+      }
+
+      .footer-top {
+        display: block;
+        margin-bottom: 52px
+      }
+
+      .footer-mark {
+        text-align: left;
+        margin-top: 30px
+      }
+
+      .footer-bottom {
+        display: block;
+        line-height: 2.1
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+
+      *,
+      *:before,
+      *:after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none
+      }
+
+      .ticker-track {
+        animation: none;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="wrap header-row"><a class="logo" href="#top">AU Toolkit</a>
+      <nav class="nav" id="nav"><a href="#overview">Overview</a><a href="#tools">Tools</a><a href="#how">Method</a><a
+          href="#install">Install</a></nav><a class="header-cta"
+        href="https://ahsanullahh.gumroad.com/l/autoolkit">Download ↗</a><button class="menu" id="menu"
+        aria-label="Open navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" id="overview">
+      <div class="wrap hero-inner reveal">
+        <div class="hero-badge"><i></i> After Effects Script</div>
+        <h1>Make your motion<br><em>move better.</em></h1>
+        <p class="hero-copy">A focused toolkit for the small animation tasks that slow big ideas down.</p><a
+          class="hero-link" href="#tools"><span>See what you can run</span><span>↘</span></a>
+        <div class="hero-tags" aria-hidden="true"><span class="tag">Ramp gradient</span><span class="tag">Bounce /
+            Flicker</span><span class="tag">Import SRT</span><span class="tag">Run JSX</span><span class="tag">Trim
+            follower</span></div>
+      </div>
+    </section>
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span class="ticker-sequence"><b>GRADIENTS</b> ✳ EXPRESSIONS ✳ ORGANIZATION ✳ SUBTITLES ✳ SCRIPTS ✳
+          LAUNCHER ✳</span>
+        <span class="ticker-sequence"><b>GRADIENTS</b> ✳ EXPRESSIONS ✳ ORGANIZATION ✳ SUBTITLES ✳ SCRIPTS ✳
+          LAUNCHER ✳</span>
+        <span class="ticker-sequence"><b>GRADIENTS</b> ✳ EXPRESSIONS ✳ ORGANIZATION ✳ SUBTITLES ✳ SCRIPTS ✳
+          LAUNCHER ✳</span>
+      </div>
+    </div>
+
+    <section class="products" id="tools">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="counter">01 / WHAT IS INSIDE</div>
+          <div>
+            <h2>One panel.<br>Every useful move.</h2>
+            <p class="accent">You stay creative director. AU Toolkit clears repetitive setup around keyframes, layers,
+              files, and scripts.</p>
+          </div>
+        </div>
+        <div class="product-grid">
+          <article class="product-card reveal" id="effects" tabindex="0" role="button" aria-haspopup="dialog"
+            aria-label="Open Effects details">
+            <div class="card-top"><span class="card-label">01 / Effects</span><span class="card-dot"></span></div>
+            <h3>Shape color and light.</h3>
+            <p>Apply Ramp, 4-Color, Randomize, Animate, CC Light Sweep, or transfer effects between layers.</p>
+            <div class="card-note">SELECT: one layer · ANIMATE: duration in seconds · GRAB: effects to clipboard</div>
+            <div class="card-visual">
+              <div class="mini-panel"><span class="mini-row"></span><span class="mini-row"></span><span
+                  class="mini-row"></span><span class="mini-row"></span></div>
+            </div>
+          </article>
+          <article class="product-card reveal" id="expressions" tabindex="0" role="button" aria-haspopup="dialog"
+            aria-label="Open Expression details">
+            <div class="card-top"><span class="card-label">02 / Expression</span><span class="card-dot"></span></div>
+            <h3>Add motion behavior.</h3>
+            <p>Bounce, Flicker, Wiggle, Cycle, and Ping-Pong. Generated sliders stay editable in AE.</p>
+            <div class="card-note">BOUNCE: 2.3 / 0.03 / 5 · FLICKER: 25 Hz / 20–100 opacity · LOOP: 2+ keys</div>
+            <div class="card-visual">
+              <div class="curve"></div>
+            </div>
+          </article>
+          <article class="product-card reveal" id="more" tabindex="0" role="button" aria-haspopup="dialog"
+            aria-label="Open More details">
+            <div class="card-top"><span class="card-label">03 / More</span><span class="card-dot"></span></div>
+            <h3>Clean the project.</h3>
+            <p>Organize footage, import SRT subtitles, edit timing, or attach a null to a Trim Path end.</p>
+            <div class="card-note">SRT: active comp · TRIM: one Shape Layer + Path 1 + Trim Paths</div>
+            <div class="card-visual">
+              <div class="folder"></div>
+            </div>
+          </article>
+          <article class="product-card reveal" id="scripts" tabindex="0" role="button" aria-haspopup="dialog"
+            aria-label="Open Scripts and Launcher details">
+            <div class="card-top"><span class="card-label">04 / Scripts + Launcher</span><span class="card-dot"></span>
+            </div>
+            <h3>Run your own tools.</h3>
+            <p>Code Runner stores Script, Expression, and Preset buttons. Launcher scans saved JSX folders.</p>
+            <div class="card-note">CODE RUNNER: v1.1.0 · LAUNCHER: .jsx / .jsxbin · PRESET: .ffx</div>
+            <div class="card-visual">
+              <div class="code-box">&gt; AU_toolkit.run()<br><span>status: ready</span><br><span>folder:
+                  motion-utils</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="operations" id="how">
+      <div class="wrap">
+        <div class="ops-layout">
+          <div class="ops-copy reveal">
+            <div class="section-head">
+              <div class="counter">02 / HOW IT WORKS</div>
+              <div>
+                <h2>You make the creative decisions.<br>AU handles the rest.</h2>
+                <p class="accent">Every result stays native to After Effects. Effects, sliders, keyframes, text layers,
+                  and nulls remain editable.</p>
+              </div>
+            </div>
+          </div>
+          <div class="ops-stage reveal">
+            <div class="ops-tags"><span>Select a layer</span><span>Choose a property</span><span>Apply
+                utility</span><span>Tune in AE</span><span>Undo if needed</span><span>Keep moving</span></div>
+            <button class="ops-object" id="ops-object" type="button" aria-label="Reveal how AU Toolkit works"
+              aria-pressed="false"><span class="ops-ring" aria-hidden="true"></span><span class="ops-ring"
+                aria-hidden="true"></span><span class="ops-ring" aria-hidden="true"></span><span class="ops-core"
+                aria-hidden="true">AU</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="install" id="install">
+      <div class="wrap install-grid">
+        <div class="install-copy reveal">
+          <div class="eyebrow">03 / INSTALL</div>
+          <h2>Get your panel into AE.</h2>
+          <p class="accent">Save the JSX file, restart After Effects, then open AU Toolkit from Window.</p>
+        </div>
+        <div class="install-steps reveal">
+          <div class="install-step">
+            <div>
+              <h3>Save as AU Toolkit.jsx</h3>
+              <p>Keep filename and JSX extension unchanged.</p>
+            </div>
+          </div>
+          <div class="install-step">
+            <div>
+              <h3>Place inside ScriptUI Panels</h3><span class="path">/Applications/Adobe After Effects
+                &lt;version&gt;/Scripts/ScriptUI Panels<button class="copy"
+                  data-copy="/Applications/Adobe After Effects &lt;version&gt;/Scripts/ScriptUI Panels">copy</button></span><span
+                class="path">C:\Program Files\Adobe\Adobe After Effects &lt;version&gt;\Support Files\Scripts\ScriptUI
+                Panels<button class="copy"
+                  data-copy="C:\Program Files\Adobe\Adobe After Effects &lt;version&gt;\Support Files\Scripts\ScriptUI Panels">copy</button></span>
+            </div>
+          </div>
+          <div class="install-step">
+            <div>
+              <h3>Restart After Effects</h3>
+              <p>AE loads dockable panels at launch.</p>
+            </div>
+          </div>
+          <div class="install-step">
+            <div>
+              <h3>Open from Window</h3>
+              <p>Choose Window → AU Toolkit. Select context before running any action.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="counter">04 / QUESTIONS</div>
+          <div>
+            <h2>Good to know.</h2>
+            <p class="accent">Short answers for common setup questions.</p>
+          </div>
+        </div>
+        <div class="faq-list reveal">
+          <details>
+            <summary><span>01</span><strong>Why does a tool ask me to select something?</strong></summary>
+            <p>Tools use current AE context. Select a layer for effects and Flicker, a property for Bounce, Wiggle,
+              Cycle, or Ping-Pong, and a composition for subtitles or project utilities.</p>
+          </details>
+          <details>
+            <summary><span>02</span><strong>Can I edit what AU Toolkit creates?</strong></summary>
+            <p>Yes. Effects, expressions, keyframes, Slider Controls, nulls, and text layers remain native After Effects
+              objects.</p>
+          </details>
+          <details>
+            <summary><span>03</span><strong>Where does Code Runner save data?</strong></summary>
+            <p>User data under JakeInMotion/CodeRunner. Metadata uses Code_Runner_Data.json; larger source files use the
+              code folder.</p>
+          </details>
+          <details>
+            <summary><span>04</span><strong>What does Trim Path Follower need?</strong></summary>
+            <p>Select exactly one Shape Layer containing Path 1 and a Trim Paths modifier. Enable Rotation if the new
+              “Trim End Follower” null should follow the path direction.</p>
+          </details>
+          <details>
+            <summary><span>05</span><strong>What does Organize Project change?</strong></summary>
+            <p>Root-level footage moves into extension folders. Video, vector, and audio receive named groups; image
+              folders can be nested under Images, and compositions under Pre-comps. Undo restores recorded moves.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-top">
+        <h2>Make fewer clicks count .</h2>
+        <div class="footer-mark">AU TOOLKIT<br><br>MADE BY AHSAN ULLAH</div>
+      </div>
+      <div class="footer-bottom"><span>Single-file manual / no dependencies</span><span>Built for Adobe After
+          Effects</span><a href="#top">Back to top ↑</a></div>
+    </div>
+  </footer>
+  <div class="card-modal-overlay" id="card-modal-overlay" aria-hidden="true">
+    <article class="card-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+      aria-describedby="modal-lead">
+      <button class="modal-close" id="modal-close" type="button" aria-label="Close tool details">×</button>
+      <div class="modal-header"><span class="modal-label" id="modal-label">Tool details</span><span class="modal-dot"
+          id="modal-dot"></span></div>
+      <h2 id="modal-title"></h2>
+      <p class="modal-lead" id="modal-lead"></p>
+      <div class="modal-visual" id="modal-visual" aria-hidden="true"></div>
+      <div class="modal-details">
+        <span class="modal-details-label">What it does</span>
+        <ul class="modal-details-list" id="modal-details-list"></ul>
+      </div>
+      <p class="modal-note" id="modal-note"></p>
+    </article>
+  </div>
+  <script>
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealObserver = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('show'); }), { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach((item, index) => { item.style.transitionDelay = `${Math.min(index % 4, 3) * 75}ms`; revealObserver.observe(item); });
+    const nav = document.getElementById('nav'); const menu = document.getElementById('menu'); menu.addEventListener('click', () => { const open = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', open); }); nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => { nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); }));
+    const progress = document.getElementById('progress'); addEventListener('scroll', () => { const max = document.documentElement.scrollHeight - innerHeight; progress.style.transform = `scaleX(${max ? scrollY / max : 0})`; }, { passive: true });
+    const tickerTrack = document.querySelector('.ticker-track');
+    if (!reduceMotion) {
+      let tickerX = innerWidth;
+      const tickerSequence = tickerTrack.querySelector('.ticker-sequence');
+      let tickerWidth = tickerSequence.getBoundingClientRect().width;
+
+      function fillTicker() {
+        while (tickerTrack.scrollWidth < innerWidth + tickerWidth) {
+          tickerTrack.appendChild(tickerSequence.cloneNode(true));
+        }
+      }
+
+      fillTicker();
+      let tickerTime = performance.now();
+
+      function moveTicker(now) {
+        const delta = Math.min(now - tickerTime, 40);
+        tickerTime = now;
+        tickerX -= delta * .14;
+        while (tickerX <= -tickerWidth) tickerX += tickerWidth;
+        tickerTrack.style.transform = `translate3d(${tickerX}px, 0, 0)`;
+        requestAnimationFrame(moveTicker);
+      }
+
+      addEventListener('resize', () => {
+        tickerWidth = tickerSequence.getBoundingClientRect().width;
+        fillTicker();
+      }, { passive: true });
+      requestAnimationFrame(moveTicker);
+    }
+    const hero = document.querySelector('.hero');
+    const heroTags = [...document.querySelectorAll('.hero-tags .tag')];
+    const heroTitle = hero.querySelector('h1');
+    const heroPill = hero.querySelector('h1 em');
+    const heroCopy = hero.querySelector('.hero-copy');
+    let heroPointer = null;
+    let heroFrame = 0;
+
+    function resetHeroTags() {
+      heroTitle.style.setProperty('--title-x', '0px');
+      heroTitle.style.setProperty('--title-y', '0px');
+      heroPill.style.setProperty('--pill-x', '0px');
+      heroPill.style.setProperty('--pill-y', '0px');
+      heroCopy.style.setProperty('--copy-x', '0px');
+      heroCopy.style.setProperty('--copy-y', '0px');
+      heroTags.forEach((tag) => {
+        tag.style.setProperty('--cursor-x', '0px');
+        tag.style.setProperty('--cursor-y', '0px');
+      });
+    }
+
+    function moveHeroTags() {
+      heroFrame = 0;
+      if (!heroPointer) return;
+      const heroBox = hero.getBoundingClientRect();
+      const relativeX = (heroPointer.x - (heroBox.left + heroBox.width / 2)) / (heroBox.width / 2);
+      const relativeY = (heroPointer.y - (heroBox.top + heroBox.height / 2)) / (heroBox.height / 2);
+      heroTitle.style.setProperty('--title-x', `${relativeX * -10}px`);
+      heroTitle.style.setProperty('--title-y', `${relativeY * -7}px`);
+      heroPill.style.setProperty('--pill-x', `${relativeX * 17}px`);
+      heroPill.style.setProperty('--pill-y', `${relativeY * 12}px`);
+      heroCopy.style.setProperty('--copy-x', `${relativeX * 5}px`);
+      heroCopy.style.setProperty('--copy-y', `${relativeY * 4}px`);
+      heroTags.forEach((tag, index) => {
+        const box = tag.getBoundingClientRect();
+        const centerX = box.left + box.width / 2;
+        const centerY = box.top + box.height / 2;
+        const dx = heroPointer.x - centerX;
+        const dy = heroPointer.y - centerY;
+        const distance = Math.hypot(dx, dy);
+        const influence = Math.max(0, 1 - distance / 430);
+        const depth = .07 + index * .012;
+        tag.style.setProperty('--cursor-x', `${dx * depth * influence}px`);
+        tag.style.setProperty('--cursor-y', `${dy * depth * influence}px`);
+      });
+    }
+
+    if (!reduceMotion) {
+      hero.addEventListener('pointermove', (event) => {
+        if (event.pointerType === 'touch') return;
+        heroPointer = { x: event.clientX, y: event.clientY };
+        if (!heroFrame) heroFrame = requestAnimationFrame(moveHeroTags);
+      });
+      hero.addEventListener('pointerleave', () => { heroPointer = null; resetHeroTags(); });
+    }
+    const navLinks = [...document.querySelectorAll('.nav a')]; const navSections = navLinks.map((link) => document.querySelector(link.getAttribute('href'))).filter(Boolean); const navObserver = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`)); }), { rootMargin: '-40% 0px -54% 0px' }); navSections.forEach((section) => navObserver.observe(section));
+    document.querySelectorAll('.product-card').forEach((card) => {
+      card.addEventListener('mouseenter', () => card.classList.add('is-hovered'));
+      card.addEventListener('mouseleave', () => { card.classList.remove('is-hovered'); card.style.transform = ''; });
+    });
+    document.querySelectorAll('[data-copy]').forEach((button) => button.addEventListener('click', async () => { try { await navigator.clipboard.writeText(button.dataset.copy); button.textContent = 'copied'; setTimeout(() => button.textContent = 'copy', 1300); } catch (error) { button.textContent = 'select'; } }));
+
+    const operations = document.getElementById('how');
+    const opsObject = document.getElementById('ops-object');
+    opsObject.addEventListener('click', () => {
+      operations.classList.add('ops-activated');
+      opsObject.setAttribute('aria-pressed', 'true');
+    });
+
+    const modalData = {
+      effects: {
+        items: [
+          'Ramp — adds a layer-sized gradient with editable start and end colors.',
+          '4-Color — places four color points across the layer bounds.',
+          'Randomize — changes colors on compatible effects without rebuilding the layer.',
+          'Animate — creates color keyframes over the duration you enter.',
+          'CC Light Sweep — adds a directional light pass with editable controls.',
+          'Grab / Apply — copies selected effects and pastes them onto other layers.'
+        ],
+        note: 'Setup: select one layer. Animate uses duration in seconds; Grab and Apply work with selected effects.'
+      },
+      expressions: {
+        items: [
+          'Bounce — adds editable Bounce Freq, Amp, and Decay controls to a compatible property.',
+          'Flicker — links opacity to frequency, minimum, and maximum controls.',
+          'Wiggle — creates adjustable frequency and amplitude motion.',
+          'Cycle — repeats existing keyframes continuously from the first keyframe.',
+          'Ping-Pong — loops existing keyframes forward, then backward.',
+          'Generated controls stay native and editable inside After Effects.'
+        ],
+        note: 'Setup: select a compatible property or layer. Cycle and Ping-Pong need at least two keyframes.'
+      },
+      more: {
+        items: [
+          'Organize Project — sorts root-level footage into extension and media folders.',
+          'Images, Video, Vector, Audio, and Pre-comps receive clear project groups.',
+          'Import SRT — reads subtitle timecodes and creates text layers in the active comp.',
+          'Subtitle Editor — edits subtitle text and In / Out timing directly in the panel.',
+          'Trim Path Follower — creates a null that follows a shape path end, with optional rotation.'
+        ],
+        note: 'Setup: SRT uses the active composition. Trim Path Follower needs one Shape Layer with Path 1 and Trim Paths.'
+      },
+      scripts: {
+        items: [
+          'Code Runner — saves Script, Expression, and Preset buttons in organized folders.',
+          'Script buttons evaluate ExtendScript files from the panel.',
+          'Expression buttons apply expressions to selected compatible properties.',
+          'Preset buttons apply .ffx files to selected layers and remember the source file.',
+          'Launcher — scans saved JSX folders and default After Effects script locations.',
+          'Supports .jsx and .jsxbin files for quick access to your own tools.'
+        ],
+        note: 'Code Runner data lives under UserData / JakeInMotion / CodeRunner. Launcher can scan custom folders.'
+      }
+    };
+
+    const modalOverlay = document.getElementById('card-modal-overlay');
+    const modal = modalOverlay.querySelector('.card-modal');
+    const modalClose = document.getElementById('modal-close');
+    const modalLabel = document.getElementById('modal-label');
+    const modalTitle = document.getElementById('modal-title');
+    const modalLead = document.getElementById('modal-lead');
+    const modalVisual = document.getElementById('modal-visual');
+    const modalDot = document.getElementById('modal-dot');
+    const modalList = document.getElementById('modal-details-list');
+    const modalNote = document.getElementById('modal-note');
+    let lastFocusedCard = null;
+
+    function openToolModal(card) {
+      const data = modalData[card.id];
+      if (!data) return;
+      lastFocusedCard = document.activeElement;
+      modalLabel.textContent = card.querySelector('.card-label').textContent;
+      modalTitle.textContent = card.querySelector('h3').textContent;
+      modalLead.textContent = card.querySelector('p').textContent;
+      modalList.innerHTML = data.items.map((item) => `<li>${item}</li>`).join('');
+      modalNote.textContent = data.note;
+      const color = getComputedStyle(card).getPropertyValue('--card-color').trim();
+      modalVisual.style.setProperty('--modal-color', color);
+      modalDot.style.background = color;
+      modalVisual.innerHTML = card.querySelector('.card-visual').innerHTML;
+      modalOverlay.classList.add('open');
+      modalOverlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(() => modalClose.focus());
+    }
+
+    function closeToolModal() {
+      if (!modalOverlay.classList.contains('open')) return;
+      modalOverlay.classList.remove('open');
+      modalOverlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      if (lastFocusedCard) lastFocusedCard.focus();
+    }
+
+    document.querySelectorAll('.product-card').forEach((card) => {
+      card.addEventListener('click', () => openToolModal(card));
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openToolModal(card);
+        }
+      });
+    });
+    modalClose.addEventListener('click', closeToolModal);
+    modalOverlay.addEventListener('click', (event) => { if (event.target === modalOverlay) closeToolModal(); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeToolModal(); });
+    modal.addEventListener('keydown', (event) => { if (event.key === 'Tab') { event.preventDefault(); modalClose.focus(); } });
+    modal.addEventListener('click', (event) => event.stopPropagation());
+  </script>
+</body>
+
+</html>
